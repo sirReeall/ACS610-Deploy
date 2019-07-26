@@ -4,11 +4,6 @@ Downloads and installs activemq. Will create a user named activemq which should 
 
 ActiveMQ requires Java be installed and JAVA_HOME configured. 
 
-This role will verify if Java is installed using yum. 
-- If this is true, no further action is required and JAVA_HOME does not need to be configued.
-- If this is false, java is download into the activemq_install_dir/java, extracted, and then the default activemq script updated with JAVA_HOME=activemq_install_dir/java
-
-
 Role Variables
 --------------
 

@@ -43,4 +43,3 @@
     path: "{{ activemq_install_dir }}/{{ activemq_file_name }}"
     state: absent
 
-# TODO: preform steps for checking if java is installed, and take appropriate action.

@@ -2,10 +2,10 @@
 - hosts: all
   become: yes
   tasks:
-    - include_role:
-        name: centos7-basic-config
-    - include_role:
-        name: mysql_install
+    # - include_role:
+    #     name: centos7-basic-config
+    # - include_role:
+    #     name: mysql_install
     - include_role:
         name: activemq_install
       vars:
