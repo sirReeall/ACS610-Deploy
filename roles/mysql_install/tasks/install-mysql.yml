@@ -1,0 +1,71 @@
+- name: Install MySQL 5.7 repo
+  yum: name=http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm state=present
+
+- name: Install MySQL 5.7
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+     - mysql-community-server
+     - mysql-community-client
+     - MySQL-python
+
+- name: Change password policy (validate_password plugin)
+  lineinfile:
+    path: /etc/my.cnf
+    state: present
+    insertafter: EOF
+    line: 'plugin-load-add=validate_password.so'
+
+- name: Change password policy (validate_password_policy LOW)
+  lineinfile:
+    path: /etc/my.cnf
+    state: present
+    insertafter: EOF
+    line: 'validate_password_policy=LOW'
+
+- name: Increase max connections
+  lineinfile:
+    path: /etc/my.cnf
+    state: present
+    insertafter: EOF
+    line: 'max_connections=300'
+
+- name: Start the MySQL service
+  service: name=mysqld state=started enabled=true
+  register: mysql_start
+
+# - name: Change mysql root password and keep track in
+#   shell: |
+#     password_match=`awk '/A temporary password is generated for/ {a=$0} END{ print a }' /var/log/mysqld.log | awk '{print $(NF)}'`
+#     echo $password_match
+#     mysql -uroot -p$password_match --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{alfresco_db_pass}}'; flush privileges; "
+#     printf "[client]\n \
+#     user=root\n \
+#     password={{alfresco_db_pass}}\n" > /root/.my.cnf
+#   args:
+#     creates: /root/.my.cnf
+#   ignore_errors: true
+#   register: change_temp_pass
+#   changed_when: "change_temp_pass.rc == 0"
+  
+- name: Change mysql root password
+  ## catch error if mysql temporary password is incorrect
+  block:
+    - name:  Attempting to update mysql root password
+      shell: |
+        password_match=`awk '/A temporary password is generated for/ {a=$0} END{ print a }' /var/log/mysqld.log | awk '{print $(NF)}'`
+        echo $password_match
+        mysql -uroot -p$password_match --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{alfresco_db_pass}}'; flush privileges; "
+        printf "[client]\n \
+        user=root\n \
+        password={{alfresco_db_pass}}\n" > /root/.my.cnf
+      args:
+        creates: /root/.my.cnf
+      register: change_temp_pass
+      notify: restart mysqld
+  rescue:  
+    - debug:
+        msg: "MySQL root user is not using the temporary password set by the installer. This could cause issues if alfresco_db_pass does not match the root password for MySQL"
+
+- meta: flush_handlers
