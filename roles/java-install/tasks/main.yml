@@ -1,5 +1,20 @@
 ---
 # tasks require to install openJDK
 
-- name: download Java
-  include_tasks: download.yml
+# - name: download Java
+#   include_tasks: download.yml
+
+- name: "creating {{ java_latest_folder }} link to {{ java_install_folder }}"
+  file:
+    src: "{{ java_install_folder }}"
+    dest: "{{ java_latest_folder }}"
+    owner: root
+    group: root
+    state: link
+
+- name: 'install Java environment variables'
+  template:
+    src: 'java.sh.j2'
+    dest: '/etc/profile.d/java.sh'
+    owner: root
+    group: root
