@@ -4,6 +4,7 @@
 - name: Install MySQL 5.7
   yum:
     name: "{{ packages }}"
+    state: present
   vars:
     packages:
      - mysql-community-server
