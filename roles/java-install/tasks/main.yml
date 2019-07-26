@@ -1,0 +1,5 @@
+---
+# tasks require to install openJDK
+
+- name: download Java
+  include_tasks: download.yml

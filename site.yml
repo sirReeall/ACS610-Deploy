@@ -6,7 +6,9 @@
     #     name: centos7-basic-config
     # - include_role:
     #     name: mysql_install
+    # - include_role:
+    #     name: activemq_install
+    #   vars:
+    #     activemq_install_dir: /opt/alfresco/activemq
     - include_role:
-        name: activemq_install
-      vars:
-        activemq_install_dir: /opt/alfresco/activemq
+        name: java-install

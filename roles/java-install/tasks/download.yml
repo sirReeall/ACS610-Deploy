@@ -1,0 +1,28 @@
+---
+### download and uncompress java binaries
+
+- name: create java install directory
+  file:
+    path: "{{ java_install_folder }}"
+    state: directory
+    mode: 0775
+    owner: root
+    group: root
+
+- name: 'Download {{ java_download_filename }} file from {{ java_download_url }}'
+  get_url:
+    url: "{{ java_download_url }}"
+    dest: "{{ java_usr_folder }}/{{ java_download_filename }}"
+
+- name: uncompressing {{ java_download_filename }} file
+  unarchive:
+    src: "{{ java_usr_folder }}/{{ java_download_filename }}"
+    dest: "{{ java_install_folder }}"
+    owner: root
+    group: root
+    extra_opts: "--strip-components=1"
+
+- name: "remove {{ java_download_filename }} from {{ java_usr_folder }}"
+  file:
+    path: "{{ java_usr_folder }}/{{ java_download_filename }}"
+    state: absent
