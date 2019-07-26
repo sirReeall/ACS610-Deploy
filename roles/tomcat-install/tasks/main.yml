@@ -1,0 +1,41 @@
+---
+
+- name: "Create user for tomcat: {{ tomcat_user }}"
+  user: 
+    name: "{{ tomcat_user }}"
+    shell: /bin/bash
+
+# create directory for tomcat
+- name: "Create tomcat directory {{ tomcat_install_folder }}"
+  file:
+    path: "{{ tomcat_install_folder }}"
+    state: directory
+
+# Download Tomcat from source
+- name: Download Tomcat 8.5.34
+  get_url:
+    url: https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.34/tomcat-8.5.34.tar.gz
+    dest: "{{ tomcat_install_folder }}"
+
+- name: unzip activemq binary
+  unarchive:
+    src: "{{ tomcat_install_folder }}/tomcat-8.5.34.tar.gz"
+    dest: "{{ tomcat_install_folder }}"
+    copy: no
+    extra_opts: "--strip-components=1"  
+
+- name: change ownership on {{ tomcat_install_folder }} to {{ tomcat_user }}
+  file:
+    path: "{{ tomcat_install_folder }}"
+    state: directory
+    mode: 0755
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_user }}"
+    recurse: yes
+
+## clean up
+
+- name: Clear up downloaded tomcat download
+  file:
+    path: "{{ tomcat_install_folder }}/tomcat-8.5.34.tar.gz"
+    state: absent

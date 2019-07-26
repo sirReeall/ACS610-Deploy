@@ -1,0 +1,4 @@
+---
+
+tomcat_install_folder: "/opt/tomcat"
+tomcat_user: "tomcat"
