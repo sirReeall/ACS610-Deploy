@@ -1,18 +1,5 @@
 ---
-- name: Create {{ acs_user }} user account
-  user:
-    name: "{{ acs_user }}"
-    shell: /bin/bash
-
-- name: Create {{ acs_install_folder }}
-  file:
-    path: "{{ acs_install_folder }}"
-    state: directory
-    owner: "{{ acs_user }}"
-    group: "{{ acs_user }}"
-    mode: 0755
-    recurse: yes
-    
+   
 - name: Creates other Alfresco folders
   file:
     path: "{{ item }}"

@@ -1,0 +1,3 @@
+---
+# vars file for acs-download
+acs_group: "{{ acs_user }}"

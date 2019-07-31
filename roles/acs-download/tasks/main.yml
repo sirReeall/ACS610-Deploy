@@ -1,0 +1,42 @@
+---
+# tasks file for acs-download
+
+- name: Create {{ acs_user }} user account
+  user:
+    name: "{{ acs_user }}"
+    shell: /bin/bash
+
+- name: Create {{ acs_install_folder }}
+  file:
+    path: "{{ acs_install_folder }}"
+    state: directory
+    owner: "{{ acs_user }}"
+    group: "{{ acs_user }}"
+    mode: 0755
+    recurse: yes
+
+- name: Download Alfresco Content Services 6.1.0 (distribution zip)
+  get_url:
+   url: https://artifacts.alfresco.com/nexus/content/groups/internal/org/alfresco/alfresco-content-services-distribution/6.1.0/alfresco-content-services-distribution-6.1.0.zip
+   dest: "{{ acs_install_folder }}/alfresco-content-services-distribution-6.1.0.zip"
+   checksum: md5:8c649afb76e9942762376b5b62a10592
+   mode: 0444
+   url_username: "{{ nexus_user }}"
+   url_password: "{{ nexus_password }}"
+  no_log: true
+  when: download_from_maven == true
+
+- name: untar instllation
+  unarchive:
+    src: '{{ acs_install_folder }}/alfresco-content-services-distribution-6.1.0.zip'
+    dest: "{{ acs_install_folder }}"
+    owner: "{{ acs_user }}"
+    group: "{{ acs_group }}"
+    creates: '{{ acs_install_folder }}/web-server/webapps/alfresco.war'
+
+- name: Clear up downloaded ACS binary
+  file:
+    path: "{{ acs_install_folder }}/alfresco-content-services-distribution-6.1.0.zip"
+    state: absent
+  when: download_from_maven == true
+  
