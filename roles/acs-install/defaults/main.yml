@@ -7,3 +7,9 @@ acs_user: "alfresco"
 
 nexus_user: 
 nexus_password:
+
+## for possible enhancements in future versions
+rdbms_vendor: "mysql"
+
+## for testing purposes
+download_from_maven: false

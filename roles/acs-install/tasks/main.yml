@@ -30,6 +30,7 @@
     - "{{ acs_install_folder }}/scripts"
     - "{{ catalina_home_folder }}"
     - "{{ catalina_home_folder }}/lib"
+    - "{{ catalina_home_folder }}/webapps"    
 
 
 - name: Download MySQL jdbc driver 5.1.40
@@ -38,6 +39,7 @@
    dest: "{{ catalina_home_folder }}/lib/mysql-connector-java-5.1.40.jar"
    checksum: md5:ee039ffdcd65dec90eb8fd783748e016
    mode: 0444
+  when: rdbms_vendor == "mysql"
 
 - name: Download Alfresco Content Services 6.1.0 (distribution zip)
   get_url:
@@ -48,6 +50,7 @@
    url_username: "{{ nexus_user }}"
    url_password: "{{ nexus_password }}"
   no_log: true
+  when: download_from_maven == true
 
 - name: untar instllation
   unarchive:
@@ -61,3 +64,37 @@
   file:
     path: "{{ acs_install_folder }}/alfresco-content-services-distribution-6.1.0.zip"
     state: absent
+  when: download_from_maven == true
+
+- name: Copy share.war to {{ catalina_home_folder }}/webapps
+  copy:
+    src: "{{ acs_install_folder }}/web-server/webapps/share.war"
+    dest: "{{ catalina_home_folder }}/webapps/share.war"
+    owner: "{{ acs_user }}"
+    group: "{{ acs_group }}"
+    remote_src: yes
+
+- name: Copy alfresco.war to {{ catalina_home_folder }}/webapps
+  copy:
+    src: "{{ acs_install_folder }}/web-server/webapps/alfresco.war"
+    dest: "{{ catalina_home_folder }}/webapps/alfresco.war"
+    owner: "{{ acs_user }}"
+    group: "{{ acs_group }}"
+    remote_src: yes
+
+- name: Copy ROOT.war to {{ catalina_home_folder }}/webapps
+  copy:
+    src: "{{ acs_install_folder }}/web-server/webapps/ROOT.war"
+    dest: "{{ catalina_home_folder }}/webapps/ROOT.war"
+    owner: "{{ acs_user }}"
+    group: "{{ acs_group }}"
+    remote_src: yes
+
+- name: Copy _vti_bin.war to {{ catalina_home_folder }}/webapps
+  copy:
+    src: "{{ acs_install_folder }}/web-server/webapps/_vti_bin.war"
+    dest: "{{ catalina_home_folder }}/webapps/_vti_bin.war"
+    owner: "{{ acs_user }}"
+    group: "{{ acs_group }}"
+    remote_src: yes
+
