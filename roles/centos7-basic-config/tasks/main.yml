@@ -35,6 +35,7 @@
       - vim
       - cifs-utils
       - net-tools.x86_64
+      - lsof
 
 - name: remove postfix using yum
   yum:
