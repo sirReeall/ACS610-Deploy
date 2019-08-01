@@ -1,38 +1,27 @@
-Role Name
+acs-download
 =========
 
-A brief description of the role goes here.
+Downloads and extracts Alfresco Content Services 6.1 binaries.
 
-Requirements
-------------
+There are no configuration activities preformed in this role.
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+ACS 6.1 is downloaded from Nexus, this is the Enterprise release and will require a user account and password to be specified when running this role.
 
-Role Variables
---------------
+You can use Ansible-Vault to create and encrypted password if required, these can be supplied when running the role.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+You could also supply the nexus_user and nexus_password via the parent playbook, either via extra_opts (insecure) or var_prompt (require interactive mode)
 
-Dependencies
-------------
+Role Variables:
+---
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Installation directory for ACS 6.1
+    acs_install_folder: /opt/alfresco
 
-Example Playbook
-----------------
+User that will own the acs_install_folder recursively
+    alfresco_user: alfresco
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Nexus user name:
+    nexus_user:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Nexus password (This must be encrypted if you are configuring this):
+    nexus_password:
