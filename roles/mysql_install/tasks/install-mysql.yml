@@ -36,24 +36,29 @@
   service: name=mysqld state=started enabled=true
   register: mysql_start
 
-  
-- name: Change mysql root password
-  ## catch error if mysql temporary password is incorrect
-  block:
-    - name:  Attempting to update mysql root password
-      shell: |
-        password_match=`awk '/A temporary password is generated for/ {a=$0} END{ print a }' /var/log/mysqld.log | awk '{print $(NF)}'`
-        echo $password_match
-        mysql -uroot -p$password_match --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{alfresco_db_pass}}'; flush privileges; "
-        printf "[client]\n \
-        user=root\n \
-        password={{alfresco_db_pass}}\n" > /root/.my.cnf
-      args:
-        creates: /root/.my.cnf
-      register: change_temp_pass
-      notify: restart mysqld
-  rescue:  
-    - debug:
-        msg: "MySQL root user is not using the temporary password set by the installer. This could cause issues if alfresco_db_pass does not match the root password for MySQL"
+- name: Get MySql root password from mysql.log
+  shell: awk '/A temporary password is generated for/ {a=$0} END{ print a }' /var/log/mysqld.log | awk '{print $(NF)}'
+  register: mysql_default_password
+
+- debug:
+    var: mysql_default_password
+
+- name: Set root password if found in mysql.log
+  shell: mysql -uroot -p"{{mysql_default_password.stdout}}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{mysql_root_password}}'; flush privileges; "
+  when: mysql_default_password is defined 
+  register: mysql_root_password_changed
+  notify: restart mysqld
+
+- debug:
+    msg: "Root password was read from mysql.log and changed"
+  when: mysql_root_password_changed is defined
+
+- name: Create .my.cnf file
+  template:
+    src: "client.my.cnf.j2"
+    dest: "/root/.my.cnf"
+    owner: root
+    group: root
+    mode: 0600
 
 - meta: flush_handlers

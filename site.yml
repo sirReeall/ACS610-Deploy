@@ -1,14 +1,48 @@
 ---
 - hosts: all
+
+  vars_prompt:
+    - name: nexus_user
+      prompt: "Please specify your Maven username: "
+      private: no
+
+    - name: nexus_password
+      prompt: "Please specify your Maven password: "
+      private: yes
+      encrypt: "sha512_crypt"
+
   become: yes
   tasks:
-    # - include_role:
-    #     name: centos7-basic-config
-    # - include_role:
-    #     name: mysql_install
+    - include_role:
+        name: centos7-basic-config
+
+    - include_role:
+        name: acs-download
+      vars: 
+        acs_install_folder: /opt/alfresco
+        acs_user: alfresco
+        download_from_maven: false
+    
+    - include_role:
+        name: mysql_install
+    
     # - include_role:
     #     name: activemq_install
     #   vars:
     #     activemq_install_dir: /opt/alfresco/activemq
-    - include_role:
-        name: java-install
+    
+    # - include_role:
+    #     name: java-install
+    
+    # - include_role:
+    #     name: tomcat-install
+    #   vars: 
+    #     tomcat_install_folder: /opt/alfresco/tomcat
+    #     tomcat_user: alfresco
+    
+    # - include_role:
+    #     name: acs-install
+    #   vars: 
+    #     acs_install_folder: /opt/alfresco
+        # acs_user: alfresco
+
