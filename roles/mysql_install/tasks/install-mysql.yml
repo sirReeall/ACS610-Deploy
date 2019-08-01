@@ -44,14 +44,20 @@
     var: mysql_default_password
 
 - name: Set root password if found in mysql.log
-  shell: mysql -uroot -p"{{mysql_default_password.stdout}}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{mysql_root_password}}'; flush privileges; "
-  when: mysql_default_password is defined 
-  register: mysql_root_password_changed
-  notify: restart mysqld
+  block:
+    - name: Trying to set password
+      shell: mysql -uroot -p"{{mysql_default_password.stdout}}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{mysql_root_password}}'; flush privileges; "
+      when: mysql_default_password is defined 
+      register: mysql_root_password_changed
+  rescue:
+    - debug:
+        msg: 
+          - "Could not set root password, returned error:" 
+          - "{{ mysql_root_password_changed.stderr_lines }}"
 
 - debug:
     msg: "Root password was read from mysql.log and changed"
-  when: mysql_root_password_changed is defined
+  when: mysql_root_password_changed.rc == 0
 
 - name: Create .my.cnf file
   template:
@@ -60,5 +66,6 @@
     owner: root
     group: root
     mode: 0600
+  when: mysql_root_password_changed is defined
 
 - meta: flush_handlers

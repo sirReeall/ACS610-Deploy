@@ -3,5 +3,7 @@
 
 alfresco_db_user: alfresco
 alfresco_db_name: alfresco61
+alfresco_db_pass: alfresco.123
+
 
 mysql_root_password: alfresco.123
