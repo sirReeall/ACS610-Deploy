@@ -26,23 +26,23 @@
     - include_role:
         name: mysql_install
     
-    # - include_role:
-    #     name: activemq_install
-    #   vars:
-    #     activemq_install_dir: /opt/alfresco/activemq
+    - include_role:
+        name: activemq_install
+      vars:
+        activemq_install_dir: /opt/alfresco/activemq
     
-    # - include_role:
-    #     name: java-install
+    - include_role:
+        name: java-install
     
-    # - include_role:
-    #     name: tomcat-install
-    #   vars: 
-    #     tomcat_install_folder: /opt/alfresco/tomcat
-    #     tomcat_user: alfresco
+    - include_role:
+        name: tomcat-install
+      vars: 
+        tomcat_install_folder: /opt/alfresco/tomcat
+        tomcat_user: alfresco
     
-    # - include_role:
-    #     name: acs-install
-    #   vars: 
-    #     acs_install_folder: /opt/alfresco
-        # acs_user: alfresco
+    - include_role:
+        name: acs-install
+      vars: 
+        acs_install_folder: /opt/alfresco
+        acs_user: alfresco
 
