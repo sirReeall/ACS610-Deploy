@@ -13,7 +13,7 @@
     owner: "{{ acs_user }}"
     group: "{{ acs_user }}"
     mode: 0755
-    recurse: yes
+
 
 - name: Download Alfresco Content Services 6.1.0 (distribution zip)
   get_url:

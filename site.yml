@@ -21,7 +21,7 @@
       vars: 
         acs_install_folder: /opt/alfresco
         acs_user: alfresco
-        download_from_maven: false
+        download_from_maven: true
     
     - include_role:
         name: mysql_install

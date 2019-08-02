@@ -10,7 +10,7 @@
 
 ## being process to install activemq
 
-- name: Check install dir exists
+- name: "Create {{ activemq_install_dir }}"
   file:
     path: "{{ activemq_install_dir }}"
     state: directory
